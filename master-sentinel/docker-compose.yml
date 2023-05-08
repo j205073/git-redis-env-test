@@ -1,0 +1,21 @@
+services:
+  redis-master:
+    image: redis
+    container_name: redis_master
+    volumes:
+      - ./docker-volume/redis-master/:/data
+      - ./redis-master.conf:/usr/local/etc/redis/redis.conf
+    ports:
+      - 6379:6379
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    networks:
+      redis_network:
+        ipv4_address: 172.20.0.2
+ 
+networks:
+  redis_network:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.20.0.0/24

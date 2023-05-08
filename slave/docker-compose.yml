@@ -1,0 +1,37 @@
+services:
+
+  redis-slave1:
+    image: redis
+    container_name: redis_slave1
+    volumes:
+      - ./docker-volume/redis-slave1/:/data
+      - ./redis-slave1.conf:/usr/local/etc/redis/redis.conf
+    ports:
+      - 6380:6380
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf", "--slaveof", "10.88.26.249", "6379"]
+    networks:
+      redis_network:
+        ipv4_address: 172.20.0.3
+
+  redis-slave2:
+    image: redis
+    container_name: redis_slave2
+    volumes:
+      - ./docker-volume/redis-slave2/:/data
+      - ./redis-slave2.conf:/usr/local/etc/redis/redis.conf
+    ports:
+      - 6381:6381
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf", "--slaveof", "10.88.26.249", "6379"]
+    depends_on:
+      - redis-slave1
+    networks:
+      redis_network:
+        ipv4_address: 172.20.0.4
+ 
+networks:
+  redis_network:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.20.0.0/24
